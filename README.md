@@ -24,3 +24,9 @@ vue3
 vite
 pinia
 ts
+
+npm init vite@latest
+npm install
+npm run dev
+报错 ：Vite PostCSS module error when building app in Svelte
+https://stackoverflow.com/questions/73136479/vite-postcss-module-error-when-building-app-in-svelte
