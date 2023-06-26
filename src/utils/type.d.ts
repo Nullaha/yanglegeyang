@@ -28,9 +28,9 @@ interface IBlockType{
   //0 - 正常, 1 - 已点击, 2 - 已消除
   status: 0 |1|2
   // 压住的其他块
-  higherThanBlocks: BlockType[]
+  higherThanBlocks: IBlockType[]
   // 被哪些块压住（为空表示可点击）
-  lowerThanBlocks: BlockType[]
+  lowerThanBlocks: IBlockType[]
 }
 /**
  * 每个格子单元类型
