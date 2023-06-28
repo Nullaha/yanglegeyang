@@ -63,7 +63,7 @@ const useGame = () => {
     console.log('initGame',gameConfig);
     
     const levelBoardDom:any = document.querySelector('.level-board')
-    levelBoardDom[0].style.cssText +=`
+    levelBoardDom.style.cssText +=`
       width: ${widthUnit * boxWidthNum}px;
       height: ${heightUnit * boxHeightNum}px;
     `;
@@ -246,10 +246,11 @@ const useGame = () => {
     }
 
     isHolyLight.value = false;
-
+    //修改状态
     block.status = 1
-
+    //移除当前元素
     if(randomIdx>-1){
+      //移除所点击的随机区域的第一个元素  todo
       randomBlocksVal.value[randomIdx] = randomBlocksVal.value[randomIdx].slice(1)
     }else{
       //非随机区才可撤回
@@ -260,44 +261,43 @@ const useGame = () => {
           return lowerThanBlock.id ===block.id
         })
       })
-      //新元素加入插槽
-      let tempSlotNum = currSlotNum.value
-      slotAreaVal.value[tempSlotNum] = block
-      //检查是否有可消除的
-      const map:Record<string,number> = {}
-      const tempSlotAreaVal = slotAreaVal.value.filter((s)=>!!s)
-      tempSlotAreaVal.forEach((slotBlock)=>{
-        const type =slotBlock.type
-        map[type] = (map[type] || 0) +1;
-      })
-      //得到新数组
-      const newSlotAreaVal = new Array(gameConfig.slotNum).fill(null)
-      tempSlotNum = 0
-      tempSlotAreaVal.forEach(slotBlock=>{
-        if(map[slotBlock.type]>=gameConfig.composeNum){
-          slotBlock.status = 2
-          clearBlockNum.value++
-          opHistory = []
-          return 
-        }
-        newSlotAreaVal[tempSlotNum++] = slotBlock
-      })
-      slotAreaVal.value = newSlotAreaVal
-      currSlotNum.value = tempSlotNum
-
-      //游戏结束
-      if(tempSlotNum>=gameConfig.composeNum){
-        gameStatus.value =2
-        setTimeout(() => {
-          alert('你输了')
-        }, 2000);
+    }
+    //新元素加入插槽
+    let tempSlotNum = currSlotNum.value
+    slotAreaVal.value[tempSlotNum] = block
+    //检查是否有可消除的
+    const map:Record<string,number> = {}
+    const tempSlotAreaVal = slotAreaVal.value.filter((s)=>!!s)
+    tempSlotAreaVal.forEach((slotBlock)=>{
+      const type =slotBlock.type
+      map[type] = (map[type] || 0) +1;
+    })
+    //得到新数组
+    const newSlotAreaVal = new Array(gameConfig.slotNum).fill(null)
+    tempSlotNum = 0
+    tempSlotAreaVal.forEach(slotBlock=>{
+      //成功消除
+      if(map[slotBlock.type]>=gameConfig.composeNum){
+        slotBlock.status = 2
+        clearBlockNum.value++
+        opHistory = []
+        return 
       }
+      newSlotAreaVal[tempSlotNum++] = slotBlock
+    })
+    slotAreaVal.value = newSlotAreaVal
+    currSlotNum.value = tempSlotNum
 
-      if(clearBlockNum.value>=totalBlockNum.value){
-        gameStatus.value = 3
-      }
+    //游戏结束
+    if(tempSlotNum>=gameConfig.composeNum){
+      gameStatus.value =2
+      setTimeout(() => {
+        alert('你输了')
+      }, 2000);
+    }
 
-
+    if(clearBlockNum.value>=totalBlockNum.value){
+      gameStatus.value = 3
     }
   }
 
@@ -306,18 +306,89 @@ const useGame = () => {
    * 开始游戏
    */
   const doStart = () =>{
-
+    gameStatus.value = 0
+    const {levelBlocks,randomBlocks,slotArea} = initGame()
+    levelBlocksVal.value = levelBlocks
+    randomBlocksVal.value =randomBlocks
+    slotAreaVal.value = slotArea
+    gameStatus.value =1
   }
   /**
-   * 洗牌
+   * 洗牌 - 随机重洗所有未被点击的块
    */
   const doShuffle = ()=>{
+    //洗牌
+    const undoBlocks = allBlocks.filter(b=>b.status===0)
+    const shuffleType = _.shuffle(undoBlocks.map(block=>block.type))
+    undoBlocks.forEach( (block,index)=>{
+      block.type = shuffleType[index]
+    })
 
+    //这是在干啥？ todo 为了触发vue的响应？
+    levelBlocksVal.value = [...levelBlocksVal.value]
+  }
+
+  /**
+   * 破坏
+   */
+  const doBroke = () =>{
+
+  }
+  /**撤回
+   * 
+   */
+  const doRevert = () =>{
+    if(opHistory.length<1){
+      return;
+    }
+    opHistory[opHistory.length-1].status = 0
+    genLevelRelation(slotAreaVal.value[currSlotNum.value-1])
+
+    slotAreaVal.value.splice(currSlotNum.value-1,1)
+
+
+  }
+
+  /**
+   * 移出块
+   */
+  const doRemove = () =>{
+
+  }
+
+  /**
+   * 圣光
+   */
+  const doHolyLight = () =>{
+    isHolyLight.value = true;
+  }
+
+  /**
+   * 透视
+   */
+  const doSeeRandom = () =>{
+    canSeeRandom.value = !canSeeRandom.value
   }
 
 
   return {
-
+    gameStatus,
+    levelBlocksVal,
+    randomBlocksVal,
+    slotAreaVal,
+    widthUnit,heightUnit,
+    currSlotNum,
+    opHistory,
+    totalBlockNum,
+    clearBlockNum,
+    isHolyLight,canSeeRandom,
+    doClickBlock,
+    doStart,
+    doBroke,
+    doRemove,
+    doRevert,
+    doHolyLight,
+    doSeeRandom,
   }
 }
 export default useGame

@@ -1,15 +1,23 @@
 <template>
   home
-  <el-button>aa</el-button>
-  <span>{{ store1.count }}</span>
-  <span>{{ store1.double }}</span>
+  <el-button @click="toGamePage(easyGameConfig)">简单模式</el-button>
+  <span>{{ globalStore.count }}</span>
+  <span>{{ globalStore.double }}</span>
 </template>
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { useGlobalStore } from '../stores/gameStore'
+import { easyGameConfig } from '../utils/gameConfig';
 
 
 const router = useRouter()
-const store1 = useGlobalStore()
+const globalStore = useGlobalStore()
+
+const toGamePage = (config?:IGameConfigType)=>{
+  if(config){
+    globalStore.setGameConfig(config)
+    router.push('/game')
+  }
+}
 </script>
