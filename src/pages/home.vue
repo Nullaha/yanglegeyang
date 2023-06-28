@@ -1,14 +1,14 @@
 <template>
-  home
+
+  <el-button @click="toGamePage(testGameConfig)">test模式</el-button>
   <el-button @click="toGamePage(easyGameConfig)">简单模式</el-button>
-  <span>{{ globalStore.count }}</span>
-  <span>{{ globalStore.double }}</span>
+
 </template>
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { useGlobalStore } from '../stores/gameStore'
-import { easyGameConfig } from '../utils/gameConfig';
+import { testGameConfig, easyGameConfig } from '../utils/gameConfig';
 
 
 const router = useRouter()

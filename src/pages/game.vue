@@ -26,9 +26,23 @@
       </div>
     </div>
     <!-- 随机选块  -->
+    <div class="random-board">
+      <div v-for="randomBlock,idx in randomBlocksVal" :key="idx" class="random-area">
+        <span v-if="randomBlock.length>0" :data-id="randomBlock[0].id" class="block" @click="()=>doClickBlock(randomBlock[0],idx)">
+          {{ randomBlock[0].type }}
+        </span>
+        <span v-for="num in Math.max(randomBlock.length-1,0)" :key="num" class="block disabled">
+          <span v-if="canSeeRandom">
+            {{ randomBlock[num].type }}
+          </span>
+        </span>
+      </div>
+    </div>
     <!-- 槽位 -->
-    <div>
-
+    <div class="slot-board">
+      <span  v-for="slotBlock,idx in slotAreaVal" :key="idx" class="block">
+        {{ slotBlock?.type }}
+      </span>
     </div>
     <!-- 技能 -->
   </div>
@@ -73,11 +87,29 @@ const onBack = ()=>{
 
 </script>
 <style scoped>
+  #gamePage{
+    background-color: aliceblue;
+  }
   .level-board{
     position: relative;
+    border: 1px solid blueviolet;
   }
   .level-block{
     position: absolute;
+  }
+  .random-board{
+    border: 1px solid red;
+    margin-top: 8px;
+  }
+  .random-area{
+    margin-top: 8px;
+  }
+
+  .slot-board{
+    border:10px solid saddlebrown;
+  }
+  .skill-board{
+    text-align: center;
   }
   .block{
     font-size: 28px;
@@ -89,5 +121,9 @@ const onBack = ()=>{
     text-align: center;
     vertical-align: top;
     display: inline-block;
+  }
+  .disabled{
+    background: grey;
+    cursor: not-allowed;
   }
 </style>

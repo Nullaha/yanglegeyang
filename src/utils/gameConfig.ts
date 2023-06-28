@@ -42,6 +42,28 @@ export const defaultGameConfig:IGameConfigType = {
 }
 
 /**
+ * test难度
+ */
+export const testGameConfig: IGameConfigType = {
+  // 槽容量
+  slotNum: 7,
+  // 需要多少个一样块的才能合成
+  composeNum: 3,
+  // 动物类别数
+  typeNum: 2,
+  // 每层块数（大致）
+  levelBlockNum: 3,
+  // 边界收缩步长
+  borderStep: 4,
+  // 总层数（最小为 2）
+  levelNum: 2,
+  // 随机区块数（数组长度代表随机区数量，值表示每个随机区生产多少块）
+  randomBlocks: [],
+  // 动物数组
+  animals,
+};
+
+/**
  * 简单难度
  */
 export const easyGameConfig: IGameConfigType = {
